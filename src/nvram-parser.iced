@@ -44,7 +44,7 @@ class NvramParser
     buf
 
   # parse buffer
-  @parse: (hexbuffer) ->
+  @parse: (hexbuffer) =>
     body = hexbuffer[@header.length..-@footer.length-2]
     bound = 0
     settings = {}
@@ -81,7 +81,7 @@ class NvramParser
     else            JSON.stringify settings
 
   # load JSON file and pack in Tomato NVRAM cfg format
-  @encode: (filename, autocb) ->
+  @encode: (filename, autocb) =>
     json = fs.readFileSync filename
     settings = JSON.parse json
 

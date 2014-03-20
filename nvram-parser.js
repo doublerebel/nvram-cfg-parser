@@ -84,7 +84,7 @@ format ends with two nulls
 
     NvramParser.parse = function(hexbuffer) {
       var body, bound, eq, key, pair, settings, val;
-      body = hexbuffer.slice(this.header.length, +(-this.footer.length - 2) + 1 || 9e9);
+      body = hexbuffer.slice(NvramParser.header.length, +(-NvramParser.footer.length - 2) + 1 || 9e9);
       bound = 0;
       settings = {};
       while (bound < body.length) {
@@ -145,8 +145,7 @@ format ends with two nulls
     };
 
     NvramParser.encode = function(filename, autocb) {
-      var buf, err, fz, json, key, last, pair, pairs, settings, value, ___iced_passed_deferral, __iced_deferrals, __iced_k,
-        _this = this;
+      var buf, err, fz, json, key, last, pair, pairs, settings, value, ___iced_passed_deferral, __iced_deferrals, __iced_k;
       __iced_k = autocb;
       ___iced_passed_deferral = iced.findDeferral(arguments);
       json = fs.readFileSync(filename);
@@ -160,10 +159,10 @@ format ends with two nulls
           _results.push(buffertools.concat(pair, this.separator));
         }
         return _results;
-      })();
+      }).call(NvramParser);
       last = pairs[pairs.length - 1];
       pairs[pairs.length - 1] = last.slice(0, -1);
-      buf = buffertools.concat.apply(buffertools, [buffertools.fromHex(new Buffer(this.header))].concat(__slice.call(pairs), [buffertools.fromHex(new Buffer(this.footer))]));
+      buf = buffertools.concat.apply(buffertools, [buffertools.fromHex(new Buffer(NvramParser.header))].concat(__slice.call(pairs), [buffertools.fromHex(new Buffer(NvramParser.footer))]));
       (function(__iced_k) {
         __iced_deferrals = new iced.Deferrals(__iced_k, {
           parent: ___iced_passed_deferral,
@@ -177,7 +176,7 @@ format ends with two nulls
               return fz = arguments[1];
             };
           })(),
-          lineno: 97
+          lineno: 98
         }));
         __iced_deferrals._fulfill();
       })(function() {
