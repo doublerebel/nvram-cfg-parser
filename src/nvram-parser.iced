@@ -36,7 +36,7 @@ class NvramParser
 
     true
 
-  # load file and return unzipped buffer
+  # (async) load file and return unzipped buffer
   @loadFile: (filename, autocb) ->
     fz = fs.readFileSync filename
     await zlib.gunzip fz, defer err, buf
@@ -67,7 +67,7 @@ class NvramParser
 
     settings
 
-  # load file and return JSON string of key/value pairs
+  # (async) load file and return JSON string of key/value pairs
   @decode: (filename, autocb) =>
     await @loadFile filename, defer buf
     return @error buf unless buf instanceof Buffer
@@ -80,7 +80,7 @@ class NvramParser
     if @pretty then JSON.stringify settings, null, 2
     else            JSON.stringify settings
 
-  # load JSON file and pack in Tomato NVRAM cfg format
+  # (async) load JSON file and pack in Tomato NVRAM cfg binary format
   @encode: (filename, autocb) =>
     json = fs.readFileSync filename
     settings = JSON.parse json
