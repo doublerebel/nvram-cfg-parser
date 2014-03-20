@@ -1,0 +1,40 @@
+{
+  "name": "nvram-cfg-parser",
+  "version": "0.0.4",
+  "description": "Command Line parser for Tomato Firmware NVRAM cfg backups.",
+  "main": "nvram-parser.js",
+  "bin": {
+    "nvramcfg": "./nvramcfg.js"
+  },
+  "dependencies": {
+    "buffertools": "~2.0.1"
+  },
+  "devDependencies": {
+    "iced-coffee-script": ">=1.6.3"
+  },
+  "optionalDependencies": {
+    "json-diff": "~0.3.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/doublerebel/nvram-cfg-parser"
+  },
+  "keywords": [
+    "tomato",
+    "router",
+    "firmware",
+    "nvram",
+    "cfg",
+    "config",
+    "parser"
+  ],
+  "author": "Charles Phillips <charles@doublerebel.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/doublerebel/nvram-cfg-parser/issues"
+  },
+  "homepage": "https://github.com/doublerebel/nvram-cfg-parser"
+}
