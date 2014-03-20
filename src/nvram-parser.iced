@@ -24,6 +24,7 @@ class NvramParser
   # define format
   @header: "54 43 46 31 0C 00 00 00".toLowerCase().replace /\s/g, ""
   @footer: "00 00".replace " ", ""
+  @separator: "\u0000"
 
   # validate that hexstring/hexbuffer is bookended by header/footer
   @validate: (hexstring) ->
@@ -50,7 +51,7 @@ class NvramParser
 
     # loop through each null character
     while bound < body.length
-      bound = buffertools.indexOf body, "\u0000", 0
+      bound = buffertools.indexOf body, @separator, 0
       break if bound < 0
 
       # slice pair and remaining body from each side of null char
@@ -87,7 +88,7 @@ class NvramParser
     # create buffer from key:value pairs and append null char
     pairs = for key, value of settings
       pair = new Buffer "#{key}=#{value}"
-      buffertools.concat pair, "\u0000"
+      buffertools.concat pair, @separator
 
     # strip null character from last line or tomato complains "Extra data found at the end."
     last = pairs[pairs.length-1]

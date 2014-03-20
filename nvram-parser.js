@@ -38,6 +38,8 @@ format ends with two nulls
 
     NvramParser.footer = "00 00".replace(" ", "");
 
+    NvramParser.separator = "\u0000";
+
     NvramParser.validate = function(hexstring) {
       var f, h;
       if ((h = hexstring.slice(0, +(this.header.length - 1) + 1 || 9e9)) !== this.header) {
@@ -67,7 +69,7 @@ format ends with two nulls
               return buf = arguments[1];
             };
           })(),
-          lineno: 40
+          lineno: 41
         }));
         __iced_deferrals._fulfill();
       })(function() {
@@ -86,7 +88,7 @@ format ends with two nulls
       bound = 0;
       settings = {};
       while (bound < body.length) {
-        bound = buffertools.indexOf(body, "\u0000", 0);
+        bound = buffertools.indexOf(body, NvramParser.separator, 0);
         if (bound < 0) {
           break;
         }
@@ -117,7 +119,7 @@ format ends with two nulls
               return buf = arguments[0];
             };
           })(),
-          lineno: 70
+          lineno: 71
         }));
         __iced_deferrals._fulfill();
       })(function() {
@@ -155,7 +157,7 @@ format ends with two nulls
         for (key in settings) {
           value = settings[key];
           pair = new Buffer("" + key + "=" + value);
-          _results.push(buffertools.concat(pair, "\u0000"));
+          _results.push(buffertools.concat(pair, this.separator));
         }
         return _results;
       })();
