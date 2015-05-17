@@ -56,13 +56,15 @@ class NvramParser
     settings = {}
 
     # loop through each null character
-    while bound < body.length
+    while -1 < bound < body.length
       bound = buffertools.indexOf body, @separator, 0
-      break if bound < 0
 
       # slice pair and remaining body from each side of null char
-      pair = body[..bound-1]
-      body = body[bound+1..]
+      if bound > -1
+        pair = body[..bound-1]
+        body = body[bound+1..]
+      else
+        pair = body
 
       # slice pair at first index of "=" ("=" is valid char in value after "=")
       pair = pair.toString "utf8"
