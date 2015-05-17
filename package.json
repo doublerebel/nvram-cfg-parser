@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "buffertools": "~2.0.1",
+    "iced-runtime": "^1.0.2",
     "is-gzip": "^1.0.0"
   },
   "devDependencies": {
