@@ -1,6 +1,6 @@
 {
   "name": "nvram-cfg-parser",
-  "version": "0.0.6",
+  "version": "1.0.0",
   "description": "Command Line parser for Tomato Firmware NVRAM cfg backups.",
   "main": "nvram-parser.js",
   "bin": {
