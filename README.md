@@ -43,11 +43,13 @@ Output example (keys in no particular order):
 
 #### encode
 
-nvramcfg **encode** `<filename>`
+nvramcfg **encode** `<format>` `<filename>`
 
 Command example:
 
-    $ nvramcfg encode tomato_v128_m943394-altered.json > tomato_v128_m943394-altered.cfg
+    $ nvramcfg encode arm tomato_v128_m943394-altered.json > tomato_v128_m943394-altered.cfg
+
+Supported formats are [`original` and `arm`](#faq).
 
 
 #### colorized json diff
@@ -69,11 +71,24 @@ Output example
 
 ### How it works
 
+#### Original
+
 The tomato_vxxx_xxxxx.cfg files are gzipped utf-8 text with null characters bounding and separating the key=value pair sets.  We unzip the file, strip the header and footer, and read the null-separated key=value pairs.
+
+#### ARM
+
+The tomato_vxxx_xxxxx.cfg files are not gzipped, but are an obfuscated version of the original utf-8-with-null-separators.  We read the random value and de-obfuscate back to the original format.
 
 ### Programmatic usage in JavaScript
 
-Decode and encode are available from the NvramParser class.  See comments in `src/nvram-parser.iced` for details.
+Decode and encode are available from the NvramParser class.  See comments in `src/nvram-parser.iced`, `src/nvram-arm-parser.iced`,  for details.
 
+### FAQ
+
+  * How to tell if my router build is ARM format?
+
+  The tomato builds for your router contain **ARM** in the filename.  Example: `tomato-RT-AC56U-AT-ARM-2.7-128-AIO-64K.trx`
+
+### License
 
 MIT Licensed.  Use at your own risk.
