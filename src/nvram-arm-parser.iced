@@ -35,5 +35,28 @@ class NvramArmParser
 
     buf
 
+  # https://bitbucket.org/pl_shibby/tomato-arm/src/af1859afbb4d48bd0e6e65e16d9f1005f65a4e43/release/src-rt-6.x.4708/router/nvram_arm/main.c?at=shibby-arm#cl-49
+  @get_rand: -> Math.round Math.random() * 0xff
+
+  @encode: (pairs, autocb) ->
+    pairsbuf = buffertools.concat pairs...
+    count    = pairsbuf.length
+    filelen  = count + (1024 - count % 1024)
+    rand     = @get_rand() % 30
+
+    filelenbuf = new Buffer 3
+    filelenbuf.writeUInt32BE filelen, 0, 3
+    header = buffertools.concat @header, filelenbuf, new Buffer [rand]
+    footer = new Buffer filelen - count
+    footer[i] = 0xfd + @get_rand() % 3 for i in footer
+
+    for byte, i in pairsbuf
+      if byte is 0x0
+        pairsbuf[i] = 0xfd + @get_rand() % 3
+      else
+        pairsbuf[i] = 0xff - pairsbuf[i] + rand
+
+    buffertools.concat header, pairsbuf, footer
+
 
 module.exports = NvramArmParser

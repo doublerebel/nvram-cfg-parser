@@ -36,7 +36,11 @@ switch (action) {
     NvramParser.decode(filename, print);
     break;
   case "encode":
-    NvramParser.encode(filename, dump);
+    var format = filename;
+    if (!(filename = process.argv[4])) {
+      die("must specify format: original or arm");
+    }
+    NvramParser.encode(filename, format, dump);
     break;
   case "diff":
     if (!process.argv[4]) {

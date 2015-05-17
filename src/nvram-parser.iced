@@ -92,8 +92,7 @@ class NvramParser
     if @pretty then JSON.stringify settings, null, 2
     else            JSON.stringify settings
 
-  # (async) load JSON file and pack in Tomato NVRAM cfg binary format
-  @encode: (filename, autocb) =>
+  @encode: (filename, format = "original", autocb) =>
     json = fs.readFileSync filename
     settings = JSON.parse json
 
@@ -106,6 +105,18 @@ class NvramParser
     last = pairs[pairs.length-1]
     pairs[pairs.length-1] = last[..-@separator.length]
 
+    switch format.toLowerCase()
+      when "original"
+        await @encodeOriginal pairs, defer encoded
+      when "arm"
+        await NvramArm.encode pairs, defer encoded
+      else
+        return @error "format not supported"
+
+    encoded
+
+  # (async) load JSON file and pack in Tomato NVRAM cfg binary format
+  @encodeOriginal: (pairs, autocb) =>
     # bookend key=value pairs with header/footer
     buf = buffertools.concat @headerbuf, pairs..., @footerbuf
     await zlib.gzip buf, defer err, fz
