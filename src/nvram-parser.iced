@@ -95,7 +95,7 @@ class NvramParser
 
     # strip null character from last line or tomato complains "Extra data found at the end."
     last = pairs[pairs.length-1]
-    pairs[pairs.length-1] = last[..-2]
+    pairs[pairs.length-1] = last[..-@separator.length]
 
     # bookend key=value pairs with header/footer
     buf = buffertools.concat @headerbuf, pairs..., @footerbuf
