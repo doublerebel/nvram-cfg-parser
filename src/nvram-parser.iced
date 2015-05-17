@@ -21,17 +21,23 @@ class NvramParser
 
   @error: (e) -> console.error "error: #{e}"
 
+  @formatHexString: (hexstring) -> hexstring.toLowerCase().replace /\s/g, ""
+
   # define format
-  @header: "54 43 46 31 0C 00 00 00".toLowerCase().replace /\s/g, ""
-  @footer: "00 00".replace " ", ""
+  @header: "54 43 46 31 0C 00 00 00"
+  @footer: "00 00"
+  @headerbuf: buffertools.fromHex new Buffer @formatHexString @header
+  @footerbuf: buffertools.fromHex new Buffer @formatHexString @footer
   @separator: "\u0000"
 
-  # validate that hexstring/hexbuffer is bookended by header/footer
-  @validate: (hexstring) ->
-    if (h = hexstring[0..@header.length-1]) isnt @header
+  # validate that buffer is bookended by header/footer
+  @validate: (buf) ->
+    return "object not a Buffer" unless buf instanceof Buffer
+
+    unless buffertools.equals (h = buf[0..@headerbuf.length-1]), @headerbuf
       return "header \"#{h}\" does not match expected NVRAM cfg format -- aborting"
 
-    else if (f = hexstring[-@footer.length..]) isnt @footer
+    unless buffertools.equals (f = buf[-@footerbuf.length..]), @footerbuf
       return "footer \"#{f}\" does not match expected NVRAM cfg format -- aborting"
 
     true
@@ -44,8 +50,8 @@ class NvramParser
     buf
 
   # parse buffer
-  @parse: (hexbuffer) =>
-    body = hexbuffer[@header.length..-@footer.length-2]
+  @parse: (buf) =>
+    body = buf[@headerbuf.length..-@footerbuf.length]
     bound = 0
     settings = {}
 
@@ -70,9 +76,6 @@ class NvramParser
   # (async) load file and return JSON string of key/value pairs
   @decode: (filename, autocb) =>
     await @loadFile filename, defer buf
-    return @error buf unless buf instanceof Buffer
-
-    hex_f = buffertools.toHex buf
     valid = @validate hex_f
     return @error valid unless valid is true
 
@@ -95,7 +98,7 @@ class NvramParser
     pairs[pairs.length-1] = last[..-2]
 
     # bookend key=value pairs with header/footer
-    buf = buffertools.concat (buffertools.fromHex new Buffer @header), pairs..., (buffertools.fromHex new Buffer @footer)
+    buf = buffertools.concat @headerbuf, pairs..., @footerbuf
     await zlib.gzip buf, defer err, fz
     return error err if err
     fz
