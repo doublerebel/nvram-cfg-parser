@@ -102,7 +102,7 @@ class NvramParser
     # bookend key=value pairs with header/footer
     buf = buffertools.concat @headerbuf, pairs..., @footerbuf
     await zlib.gzip buf, defer err, fz
-    return error err if err
+    return @error err if err
     fz
 
 
