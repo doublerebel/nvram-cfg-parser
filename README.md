@@ -17,6 +17,10 @@ Install from npm:
 
 #### decode
 
+nvramcfg **decode** `<filename>`
+
+Command example:
+
     $ nvramcfg decode tomato_v128_m943394.cfg
 
 Output example (keys in no particular order):
@@ -39,12 +43,29 @@ Output example (keys in no particular order):
 
 #### encode
 
+nvramcfg **encode** `<filename>`
+
+Command example:
+
     $ nvramcfg encode tomato_v128_m943394-altered.json > tomato_v128_m943394-altered.cfg
+
 
 #### colorized json diff
 
+nvramcfg **diff** `<filename1>` `<filename2>`
+
+Command example:
+
     $ nvramcfg diff tomato_v128_m943394.json tomato_v128_m943394-altered.json
 
+Output example
+
+```diff
+ {
+-  router_name: "TomatoUSB"
++  router_name: "ExampleName"
+ }
+```
 
 ### How it works
 
