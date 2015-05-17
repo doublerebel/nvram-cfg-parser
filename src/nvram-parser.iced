@@ -12,7 +12,9 @@ format ends with two nulls
 
 fs   = require 'fs'
 zlib = require 'zlib'
+isGzip = require 'is-gzip'
 buffertools = require 'buffertools'
+NvramArm = require "./nvram-arm-parser"
 
 
 class NvramParser
@@ -44,9 +46,17 @@ class NvramParser
 
   # (async) load file and return unzipped buffer
   @loadFile: (filename, autocb) ->
-    fz = fs.readFileSync filename
-    await zlib.gunzip fz, defer err, buf
-    return err if err
+    file = fs.readFileSync filename
+
+    if isGzip file
+      await zlib.gunzip file, defer err, buf
+      err = valid unless (valid = @validate buf) is true
+    else if NvramArm.is file
+      await NvramArm.decode file, defer buf
+    else
+      err = "unrecognized filetype"
+
+    return @error err if err
     buf
 
   # parse buffer
@@ -78,9 +88,6 @@ class NvramParser
   # (async) load file and return JSON string of key/value pairs
   @decode: (filename, autocb) =>
     await @loadFile filename, defer buf
-    valid = @validate hex_f
-    return @error valid unless valid is true
-
     settings = @parse buf
     if @pretty then JSON.stringify settings, null, 2
     else            JSON.stringify settings
