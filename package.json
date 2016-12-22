@@ -7,7 +7,7 @@
     "nvramcfg": "./nvramcfg.js"
   },
   "dependencies": {
-    "buffertools": "~2.0.1",
+    "buffertools": "latest",
     "iced-runtime": "^1.0.2",
     "is-gzip": "^1.0.0"
   },
