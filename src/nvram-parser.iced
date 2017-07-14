@@ -66,7 +66,7 @@ class NvramParser
     settings = {}
 
     # loop through each null character
-    while -1 < bound < body.length
+    while body.length
       bound = buffertools.indexOf body, @separator, 0
 
       # slice pair and remaining body from each side of null char
@@ -74,7 +74,7 @@ class NvramParser
         pair = body[..bound-1]
         body = body[bound+1..]
       else
-        pair = body
+        return @error "format not supported, missing null terminator"
 
       # slice pair at first index of "=" ("=" is valid char in value after "=")
       pair = pair.toString "utf8"
