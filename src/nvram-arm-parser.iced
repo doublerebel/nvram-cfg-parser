@@ -12,7 +12,7 @@ class NvramArmParser
   @decode: (buf, autocb) ->
     unless buf instanceof Buffer
       buf = fs.readFileSync buf
-      return @error "invalid header, expected HDR2" unless @is buf
+      return @error "header \"#{buf}\" does not match expected NVRAM ARM cfg format -- aborting" unless @is buf
 
     # Header format is 8 bytes:
     # - first 4 are @header
