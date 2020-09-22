@@ -41,7 +41,10 @@ class NvramArmParser
     pairsbuf = Buffer.concat pairs
     count    = pairsbuf.length
     filelen  = count + (1024 - count % 1024)
-    rand     = @get_rand() % 30
+    # https://bitbucket.org/pedro311/freshtomato-arm/commits/32fdfa7f61495b8ad1b7439fa96632096daeb961
+    loop
+      rand = @get_rand() % 30
+      break unless 7 < rand < 14
 
     filelenbuf = Buffer.alloc 3
     filelenbuf.writeUIntBE filelen, 0, 3
