@@ -13,7 +13,6 @@ format ends with two nulls
 fs   = require 'fs'
 zlib = require 'zlib'
 isGzip = require 'is-gzip'
-buffertools = require 'buffertools'
 NvramArm = require "./nvram-arm-parser"
 
 
@@ -28,18 +27,18 @@ class NvramParser
   # define format
   @header: "54 43 46 31 0C 00 00 00"
   @footer: "00 00"
-  @headerbuf: buffertools.fromHex new Buffer @formatHexString @header
-  @footerbuf: buffertools.fromHex new Buffer @formatHexString @footer
-  @separator: "\u0000"
+  @headerbuf: Buffer.from (@formatHexString @header), "hex"
+  @footerbuf: Buffer.from (@formatHexString @footer), "hex"
+  @separator: Buffer.from "00", "hex"
 
   # validate that buffer is bookended by header/footer
   @validate: (buf) ->
     return "object not a Buffer" unless buf instanceof Buffer
 
-    unless buffertools.equals (h = buf[0..@headerbuf.length-1]), @headerbuf
+    unless (h = buf[0..@headerbuf.length-1]).equals @headerbuf
       return "header \"#{h}\" does not match expected NVRAM cfg format -- aborting"
 
-    unless buffertools.equals (f = buf[-@footerbuf.length..]), @footerbuf
+    unless (f = buf[-@footerbuf.length..]).equals @footerbuf
       return "footer \"#{f}\" does not match expected NVRAM cfg format -- aborting"
 
     true
@@ -67,7 +66,7 @@ class NvramParser
 
     # loop through each null character
     while -1 < bound < body.length
-      bound = buffertools.indexOf body, @separator, 0
+      bound = body.indexOf @separator
 
       # slice pair and remaining body from each side of null char
       if bound > -1
@@ -98,8 +97,8 @@ class NvramParser
 
     # create buffer from key:value pairs and append null char
     pairs = for key, value of settings
-      pair = new Buffer "#{key}=#{value}"
-      buffertools.concat pair, @separator
+      pair = Buffer.from "#{key}=#{value}"
+      Buffer.concat [pair, @separator]
 
     # strip null character from last line or tomato complains "Extra data found at the end."
     last = pairs[pairs.length-1]
@@ -118,7 +117,7 @@ class NvramParser
   # (async) load JSON file and pack in Tomato NVRAM cfg binary format
   @encodeOriginal: (pairs, autocb) =>
     # bookend key=value pairs with header/footer
-    buf = buffertools.concat @headerbuf, pairs..., @footerbuf
+    buf = Buffer.concat [@headerbuf, pairs..., @footerbuf]
     await zlib.gzip buf, defer err, fz
     return @error err if err
     fz
