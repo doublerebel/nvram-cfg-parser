@@ -135,13 +135,13 @@ format ends with two nulls
       body = buf.slice(NvramParser.headerbuf.length, +(-NvramParser.footerbuf.length) + 1 || 9e9);
       bound = 0;
       settings = {};
-      while ((-1 < bound && bound < body.length)) {
+      while (body.length) {
         bound = buffertools.indexOf(body, NvramParser.separator, 0);
         if (bound > -1) {
           pair = body.slice(0, +(bound - 1) + 1 || 9e9);
           body = body.slice(bound + 1);
         } else {
-          pair = body;
+          return NvramParser.error("format not supported, missing null terminator");
         }
         pair = pair.toString("utf8");
         eq = pair.indexOf("=");
