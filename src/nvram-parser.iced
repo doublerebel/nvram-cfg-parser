@@ -26,7 +26,7 @@ class NvramParser
 
   # define format
   @header: "54 43 46 31 0C 00 00 00"
-  @footer: "00 00"
+  @footer: "00"
   @headerbuf: Buffer.from (@formatHexString @header), "hex"
   @footerbuf: Buffer.from (@formatHexString @footer), "hex"
   @separator: Buffer.from "00", "hex"
@@ -99,10 +99,6 @@ class NvramParser
     pairs = for key, value of settings
       pair = Buffer.from "#{key}=#{value}"
       Buffer.concat [pair, @separator]
-
-    # strip null character from last line or tomato complains "Extra data found at the end."
-    last = pairs[pairs.length-1]
-    pairs[pairs.length-1] = last[..-@separator.length]
 
     switch format.toLowerCase()
       when "original"
